@@ -48,6 +48,12 @@ body{
     margin-bottom: 10px;
     white-space: nowrap;
 }
+.novoFormato{
+    background-color: transparent;
+    border: none;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: revert;
+}
 #resposta{
     position: fixed;
     bottom: 3vh;
@@ -76,9 +82,30 @@ body{
 const input = document.getElementById('resposta')
 const formato = document.getElementById('formato')
 
-function escreva(texto){
-    document.getElementById('container').insertAdjacentHTML("beforeend", "<p class='caixaEscreva'>" + texto + "</p>");
+let i = 0
 
+function mudarFormato(){
+
+    const caixas = document.querySelectorAll('.caixaEscreva, .caixaLeia')
+        caixas.forEach (el => {
+        el.classList.toggle('novoFormato')
+    })
+
+    if (i == 0){
+        i = 1
+    }
+    else if (i == 1){
+        i = 0
+    }
+}
+
+function escreva(texto){
+    if (i == 0){
+        document.getElementById('container').insertAdjacentHTML("beforeend", "<p class='caixaEscreva'>" + texto + "</p>");
+    }
+    else{
+        document.getElementById('container').insertAdjacentHTML("beforeend", "<p class='caixaEscreva novoFormato'>" + texto + "</p>");
+    }
 }
 
 function leia() {
@@ -91,28 +118,20 @@ function leia() {
         event.preventDefault(); 
         let valor = input.value
 
-          document.getElementById('container').insertAdjacentHTML("beforeend", "<div class='espaço'><p class='caixaLeia'>" + valor + "</p>");
-          input.value = "";
-          input.removeEventListener("keydown", aoPressionarEnter);
-          resolve(valor);
-      }
+        if (i == 0){
+            document.getElementById('container').insertAdjacentHTML("beforeend", "<div class='espaço'><p class='caixaLeia'>" + valor + "</p>");
+        }
+        else{
+            document.getElementById('container').insertAdjacentHTML("beforeend", "<div class='espaço'><p class='caixaLeia novoFormato'>" + valor + "</p>");
+        }
+        input.value = "";
+        input.removeEventListener("keydown", aoPressionarEnter);
+        resolve(valor);
+    }
     }
 
     input.addEventListener("keydown", aoPressionarEnter);
   });
-}
-
-function mudarFormato(){
-
-    formato.addEventListener("click", (event) =>{
-            const elementos = document.querySelectorAll('.caixaEscreva, .caixaLeia')
-                elementos.forEach (elemento => {
-                elemento.style.background = ('unset')
-                elemento.style.border = ('unset')
-                elemento.style.fontSize = ('unset')
-                elemento.style.fontFamily = ('Courier')
-        })
-    })
 }
 
 /*Instruções:
@@ -122,11 +141,6 @@ function mudarFormato(){
    4. Se há quaisquer dúvidas ou erros, SE VIRE ;) .
    Créditos: Eu né pai - Danilo, Marcos.
    ps: Para usar espaço como variavel, use "&nbsp".
-*/
-
-/*TO-DO:
-    Fazer o botão mudar o estilo das caixas de volta
-    Fazer o botão precisar de só um clique para mudar o estilo das caixas
 */
 
 async function inicio() {
