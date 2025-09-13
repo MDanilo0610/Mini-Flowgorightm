@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Flowgorightm</title>
+</head>
+<style>
+*{
+    font-family: 'Arial';
+}
+:root{
+    --corEscreva: lightgreen;
+    --corLeia: lightblue;
+}
+body{
+    overflow: hidden;
+}
+#container{
+    overflow: auto;
+    height: 85vh;
+    width: 99vw;
+
+}
+.caixaEscreva{
+    background-color: var(--corEscreva);
+    border: 5px solid color-mix(in srgb, var(--corEscreva), black 50%);
+    font-size: 5vh;
+    width: min-content;
+    padding: 1vh;
+    margin: 0;
+    margin-bottom: 10px;
+    white-space: nowrap;
+}
+.espaço{
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    height: min-content;
+}
+.caixaLeia{
+    background-color: var(--corLeia);
+    border: 5px solid color-mix(in srgb, var(--corLeia), black 50%);
+    font-size: 5vh;
+    width: min-content;
+    padding: 1vh;
+    margin: 0;
+    margin-bottom: 10px;
+    white-space: nowrap;
+}
+.novoFormato{
+    background-color: transparent;
+    border: none;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: revert;
+}
+#resposta{
+    position: fixed;
+    bottom: 3vh;
+    height: 7vh;
+    font-size: 5vh;
+    width: 98vw;
+}
+#clique{
+    position: fixed;
+    right: 1vw;
+}
+#formato{
+    position: fixed;
+    right: 1vw;
+    bottom: 11vh;
+}
+</style>
+<body>
+<form>
+    <input type="button" value="Mudar Formato" id="formato" onclick="mudarFormato()">
+    <input type="text" placeholder="Digite aqui" id="resposta" autocomplete="off">
+</form>
+<div id="container"></div>
+</body>
+<script>
+const input = document.getElementById('resposta')
+const formato = document.getElementById('formato')
+
+let i = 0
+
+function mudarFormato(){
+
+    const caixas = document.querySelectorAll('.caixaEscreva, .caixaLeia')
+        caixas.forEach (el => {
+        el.classList.toggle('novoFormato')
+    })
+
+    if (i == 0){
+        i = 1
+    }
+    else if (i == 1){
+        i = 0
+    }
+}
+
+function escreva(texto){
+    if (i == 0){
+        document.getElementById('container').insertAdjacentHTML("beforeend", "<p class='caixaEscreva'>" + texto + "</p>");
+    }
+    else{
+        document.getElementById('container').insertAdjacentHTML("beforeend", "<p class='caixaEscreva novoFormato'>" + texto + "</p>");
+    }
+}
+
+function leia() {
+  return new Promise(resolve => {
+
+    input.focus();
+
+    function aoPressionarEnter(event) {
+      if (event.key === "Enter") {
+        event.preventDefault(); 
+        let valor = input.value
+
+        if (i == 0){
+            document.getElementById('container').insertAdjacentHTML("beforeend", "<div class='espaço'><p class='caixaLeia'>" + valor + "</p>");
+        }
+        else{
+            document.getElementById('container').insertAdjacentHTML("beforeend", "<div class='espaço'><p class='caixaLeia novoFormato'>" + valor + "</p>");
+        }
+        input.value = "";
+        input.removeEventListener("keydown", aoPressionarEnter);
+        resolve(valor);
+    }
+    }
+
+    input.addEventListener("keydown", aoPressionarEnter);
+  });
+}
+
+/*Instruções:
+   1. Para declarar uma variavel baseada num valor dado pelo usuário, basta usar o formato: tipo nome = await leia();
+   2. Se quiser que essas variaveis tenham um tipo especifico, use parseInt para inteiros, parseFloat para reais, String para texto e Boolean para booleanas, seguindo o formato: tipo(await leia());
+   3. async function inicio() é onde será feito o algoritmo;
+   4. Se há quaisquer dúvidas ou erros, SE VIRE ;) .
+   Créditos: Eu né pai - Danilo, Marcos.
+   ps: Para usar espaço como variavel, use "&nbsp".
+*/
+
+async function inicio() {
+    escreva("Tamanho da árvore (menor que 10) :")
+    let size = parseInt(await leia())
+    let esp = ""
+    let ast = "*"
+    let index = 0
+
+    while(size !== 0){
+        if(size>10){
+            escreva("Tente novamente")
+            size = parseInt(await leia())
+        }
+        else{
+            for(let i = 0; i < size-1; i++){
+                esp += "&nbsp"
+            }
+            escreva(esp + '' + ast)
+            ast += "**"
+            esp = ""
+            size--
+            index++
+        }
+    }
+
+    for(let i = 0; i<index-1; i++){
+        esp += "&nbsp"
+    }
+
+    escreva(esp + "|")
+    escreva(esp + "|")
+}
+
+inicio();
+
+</script>
+</html>
